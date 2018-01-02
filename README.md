@@ -6,7 +6,7 @@ raspi の omxplayer で動画再生中に、テレビのリモコンで操作で
 ## 準備
 ```
 sudo apt install cec-client
-git clone 
+git clone https://github.com/takuya/omxplayer-with-tvremote
 ```
 
 ## 使い方
