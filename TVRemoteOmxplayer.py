@@ -6,7 +6,7 @@ import subprocess
 
 from CecClient import CecClient
 
-class OmxplayerWithTVRemote(CecClient):
+class TVRemoteOmxplayer(CecClient):
   
   KEY_UP   = b'\[A'
   KEY_DOWN = b'\[B'
