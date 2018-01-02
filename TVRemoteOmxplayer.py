@@ -6,7 +6,13 @@ import subprocess
 
 from CecClient import CecClient
 
-"""
+class OmxplayerWithTVRemote(CecClient):
+  
+  KEY_UP   = b'\[A'
+  KEY_DOWN = b'\[B'
+  KEY_RIGHT= b'\[C'
+  KEY_LEFT = b'\[D'
+  """
            1           decrease speed
            2           increase speed
            <           rewind
@@ -31,14 +37,8 @@ from CecClient import CecClient
            right arrow seek +30 seconds
            down arrow  seek -600 seconds
            up arrow    seek +600 seconds
-"""
-class TVRemoteOmxplayer(CecClient):
-
-  KEY_UP   = b'\[A'
-  KEY_DOWN = b'\[B'
-  KEY_RIGHT= b'\[C'
-  KEY_LEFT = b'\[D'
-
+  """
+  
   keymap_of_omxplayer = {
     'decrease speed': b'1',
     'increase speed': b'2',
@@ -64,9 +64,9 @@ class TVRemoteOmxplayer(CecClient):
     'seek +30 seconds': KEY_RIGHT,
     'seek -600 seconds': KEY_DOWN,
     'seek +600 seconds': KEY_UP,
-  }
+    }
   keymap_tvremote_to_omxplayer_action ={
-
+    
     'select':'pause/resume',
     'right':'seek +30 seconds',
     'left':'seek -30 seconds',
@@ -81,12 +81,12 @@ class TVRemoteOmxplayer(CecClient):
     'channel_up':'increase volume',
     'rewind':'rewind',
     'Fast_forward':'fast forward',
-  
+    
     }
   
   def __init__(self):
     super().__init__()
-    
+  
   def play(self, url, *options):
     cmd = f"omxplayer %s '{url}' " % ' '.join(options)
     print(cmd)
@@ -97,9 +97,16 @@ class TVRemoteOmxplayer(CecClient):
     key = self.keymap_of_omxplayer[name_of_command]
     self.p.stdin.write(key)
     self.p.stdin.flush()
-
-  def dispatch(self,key):
   
+  def exit(self):
+    self.on_exit()
+  
+  def on_exit(self):
+    self.p.terminate()
+    self.cec_proc.terminate()
+  
+  def dispatch(self,key):
+    
     match = re.search( "[^\(]+", key )
     key =  match[0]
     key = re.sub('\s+$', "", key)
@@ -110,10 +117,11 @@ class TVRemoteOmxplayer(CecClient):
       omxplayer_key = self.keymap_tvremote_to_omxplayer_action[key]
       self.send_key_to_omxplayer(omxplayer_key)
       if key == 'exit':
+        self.on_exit()
         exit()
     else:
       print(f"{key} pressed, but no action defined")
-    
-  
+
+
 
 
