@@ -3,6 +3,8 @@
 import argparse
 import os
 import sys
+import atexit
+
 
 path = os.path.dirname(os.path.abspath(f'{__file__}/../'))
 sys.path.append(path)
