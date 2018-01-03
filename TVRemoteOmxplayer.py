@@ -3,6 +3,9 @@
 import re
 import shlex
 import subprocess
+import time
+from threading import Thread
+
 
 from CecClient import CecClient
 
@@ -86,29 +89,30 @@ class TVRemoteOmxplayer(CecClient):
   
   def __init__(self):
     super().__init__()
+    
   def play(self, url, *options):
     cmd = f"omxplayer '{url}' "
     if len(options) > 0 :
       cmd = cmd + ' '.join(options)
     print(cmd)
+    
     cmd = shlex.split(cmd)
-    self.p = subprocess.Popen(cmd,stdin=subprocess.PIPE,stdout=subprocess.PIPE)
-    self.start()
+    self.p = subprocess.Popen(cmd,stdin=subprocess.PIPE,stdout=subprocess.DEVNULL)
+    th1 = self.run()
+    self.p.wait()
+
   def send_key_to_omxplayer(self,name_of_command):
     key = self.keymap_of_omxplayer[name_of_command]
     self.p.stdin.write(key)
     self.p.stdin.flush()
 
-  def exit(self):
-    self.on_exit()
-
   def on_exit(self):
     if hasattr(self,'p') :
-      self.p.terminate()
+      self.p.kill()
     if hasattr(self,'cec_proc') :
-      self.cec_proc.terminate()
-      
-  
+      self.cec_proc.kill()
+
+
   def dispatch(self,key):
     
     match = re.search( "[^\(]+", key )

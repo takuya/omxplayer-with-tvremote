@@ -17,7 +17,7 @@ def main(args):
   
   player = TVRemoteOmxplayer.TVRemoteOmxplayer()
   def on_exit():
-    player.exit()
+    player.on_exit()
     pass
 
   atexit.register( on_exit )

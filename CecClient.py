@@ -6,6 +6,7 @@ import atexit
 import time
 import subprocess
 import re
+from threading import Thread
 
 class CecClient(object):
   
@@ -15,18 +16,23 @@ class CecClient(object):
   def __init__(self):
     self.pattern = re.compile( CecClient.regex_pattern )
   
-  def start(self):
-    
-    proc = subprocess.Popen(["cec-client"], stdout=subprocess.PIPE)
-    
+  def watch(self):
+    self.cec_proc = subprocess.Popen(["cec-client"], stdout=subprocess.PIPE)
+  
     while True:
-      line = proc.stdout.readline()
+      line = self.cec_proc.stdout.readline()
       line = line.decode("utf-8")
-      
+    
       match = re.search( self.regex_pattern ,line )
       if match :
         key =  match[0]
         self.dispatch(key)
+
+  def run(self):
+    self.cec_th = Thread( target=self.watch, daemon=True )
+    self.cec_th.start()
+    return self.cec_th
+    
   
   def dispatch(self,key):
     
