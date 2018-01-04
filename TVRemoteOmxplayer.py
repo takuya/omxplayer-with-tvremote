@@ -5,7 +5,7 @@ import shlex
 import subprocess
 import time
 from threading import Thread
-
+import os,signal
 
 from CecClient import CecClient
 
@@ -91,13 +91,13 @@ class TVRemoteOmxplayer(CecClient):
     super().__init__()
     
   def play(self, url, *options):
-    cmd = f"omxplayer '{url}' "
+    cmd = f"/usr/bin/omxplayer.bin '{url}' "
     if len(options) > 0 :
       cmd = cmd + ' '.join(options)
-    print(cmd)
     
     cmd = shlex.split(cmd)
-    self.p = subprocess.Popen(cmd,stdin=subprocess.PIPE,stdout=subprocess.DEVNULL)
+    print(cmd)
+    self.p = subprocess.Popen(cmd,stdin=subprocess.PIPE,stdout=subprocess.DEVNULL )
     th1 = self.run()
     self.p.wait()
 
@@ -107,6 +107,7 @@ class TVRemoteOmxplayer(CecClient):
     self.p.stdin.flush()
 
   def on_exit(self):
+    ##
     if hasattr(self,'p') :
       self.p.kill()
     if hasattr(self,'cec_proc') :
@@ -129,7 +130,9 @@ class TVRemoteOmxplayer(CecClient):
         exit()
     else:
       print(f"{key} pressed, but no action defined")
+    #
 
+##
 
 
 
