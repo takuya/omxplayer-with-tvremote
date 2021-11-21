@@ -42,7 +42,11 @@ def main_proc(argv)
   argv = argv[(argv.rindex('--')+1)..-1]
   urls = argv
 
-  system("echo 'as 0 ' | cec-client -s --log-level 1 ")
+  s = Thread.new {
+    system("echo 'as 0 ' | cec-client -s --log-level 1 ")
+    system("echo 'as 0 ' | cec-client -s --log-level 1 ")
+  }
+  s.join
 
 
   urls.each{|url|
@@ -52,6 +56,10 @@ def main_proc(argv)
     Process.wait pid
   }
   
+  s = Thread.new {
+    system("echo 'standby 0 ' | cec-client -s --log-level 1 ")
+  }
+  s.join
 end
 
 if __FILE__ == $0 then

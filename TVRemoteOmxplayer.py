@@ -84,14 +84,14 @@ class TVRemoteOmxplayer(CecClient):
     'channel_up':'increase volume',
     'rewind':'rewind',
     'Fast_forward':'fast forward',
-    
+    'display_information':'show info',
     }
   
   def __init__(self):
     super().__init__()
     
   def play(self, url, *options):
-    cmd = f"/usr/bin/omxplayer.bin '{url}' "
+    cmd = f"/usr/bin/omxplayer.bin --hw -o hdmi '{url}' "
     if len(options) > 0 :
       cmd = cmd + ' '.join(options)
     
