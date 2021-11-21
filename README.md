@@ -15,6 +15,12 @@ git clone https://github.com/takuya/omxplayer-with-tvremote
 ./bin/omxplayer-with-tvremote.py URL
 ```
 
+## プロセス管理
+
+omxplayer を複数起動しないように管理するサンプル
+```
+bin/omxplayer-daemon.rb restart -- URL
+```
 
 ## Reference 
 
